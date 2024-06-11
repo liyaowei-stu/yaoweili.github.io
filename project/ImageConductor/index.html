@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Mutual Self-Attention Control">
+  <meta name="keywords" content="Stable Diffusion">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Conductor: Precision Control for Interactive Video Synthesis</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="./static/js/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <div class="logo">
+              <a href="index.html">
+                <img src="./static/assets/logo.png">
+              </a>
+            </div>
+
+            <h1 class="title is-2 publication-title">Image Conductor: Precision Control for Interactive Video Synthesis
+            </h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=XlhADHoAAAAJ&hl=zh-CN">Yaowei Li</a><sup>1,2</sup>,
+              </span>
+              <!-- <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=EcS0L5sAAAAJ&hl=en">Zhaoyang Zhang</a><sup>3,4</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://xinntao.github.io">Xintao Wang</a><sup>3&#9993</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://zzyfd.github.io/">Zhaoyang Zhang</a><sup>3</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=4oXBp9UAAAAJ">Ying Shan</a><sup>3</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=7brFI_4AAAAJ&hl=zh-CN">Jian Zhang</a><sup>1,2&#9993</sup>,
+            </span> -->
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>School of Electronic and Computer Engineering, Shenzhen Graduate
+                School, Peking University,</span>
+              <!-- <span class="author-block"><sup>2</sup>Peking University Shenzhen Graduate School-Rabbitpre AIGC Joint Research Laboratory,</span> -->
+              <span class="author-block"><sup>2</sup>ARC Lab, Tencent PCG,</span>
+              <!-- <span class="author-block"><sup>4</sup>University of Tokyo</span> -->
+            </div>
+
+            <div class="column has-text-centered">
+              <span class="link-block">
+                <a href="" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fab fa-github"></i>
+                  </span>
+                  <span>Github</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/assets/teaser.png" alt="teaser" width="100%">
+    </div>
+  </div>
+</section> -->
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Filmmaking and animation production often require sophisticated techniques for coordinating camera
+              transitions and object movements, typically involving labor-intensive real-world capturing. Despite
+              advancements in generative AI for video creation, achieving precise control over motion for interactive
+              video asset generation remains challenging. To this end, we propose <b>Image Conductor</b>, a method for
+              precise control of camera transitions and object movements to generate video assets from a single image.
+              An well-cultivated training strategy is proposed to separate distinct camera and object motion by camera
+              LoRA weights and object LoRA weights. To further address cinematographic variations from ill-posed
+              trajectories, we introduce a camera-free guidance technique during inference, enhancing object movements
+              while eliminating camera transitions. Additionally, we develop a trajectory-oriented video motion data
+              curation pipeline for training. Extensive experiments demonstrate our method's precision and fine-grained
+              control in generating motion-controllable videos from images, advancing the practical application of
+              interactive video synthesis.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+    </div>
+  </section>
+
+  <!-- Methods section -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 has-text-centered">Methods</h2>
+
+          <div class="content has-text-justified">
+            <p>To address the lack of large-scale annotated video data, we first design a data construction pipeline to
+              create
+              a consistent video dataset with appropriate motion. Then, an well-cultivated two-stage training scheme is
+              proposed to derive motion-controllable video ControlNet<a href="#ControlNet"> [1]</a><a href="#SparsCtrl">
+                [2]</a>, which can separate camera tansitions and
+              object movements based on distinct lora weights.</p>
+          </div>
+
+          <div class="content has-text-justified">
+            <img src="./static/assets/method.png" class="method">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Methods section -->
+
+  <!-- Results -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered"> Selected Visual Results </h2>
+      <!-- <hr> -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <div class="content has-text-justified">
+            <p>Image Conductor enables the controllable animation of static images by precisely directing camera
+              transitions and object movements according to user specifications, resulting in coherent video assets.
+              Additionally, pre-trained weights from the open-source community<a href="#CIVITAI"> [3]</a> can be loaded
+              to achieve personalized generation, similar to Animatediff<a href="#Animatediff"> [4]</a>.</p>
+          <p>Note: The prompt displayed below is a simplified version.</p>
+          </div>
+        </div>
+      </div>
+
+
+      <img src="./static/images/obj.png" alt="object movements" class="cam-obj-label">
+
+      <!-- <hr width="79%"> -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/trajs/rose.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/trajs/rose-1.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "A red rose engulfed in flames."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/trajs/turtle.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/trajs/turtle-1.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "a sea turtle gracefully swimming over a coral reef."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/trajs/bee.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/trajs/bee-1.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "A honeybee flies to the sunflower."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/trajs/jellyfish-2.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/trajs/jellyfish-2.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "Glowing jellyfish mushroom."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+
+
+      </div>
+
+      <img src="./static/images/cam.png" alt="camera tansitions" class="cam-obj-label">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/cam/tusun.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/cam/tusun-cam.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "Tusuncub with its mouth open."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/cam/girl.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/cam/girl-cam.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "1girl, short wavy hair, sunflower."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/cam/sakura.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/cam/sakura-cam.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "Blooming cherry blossom."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full-width">
+          <figure>
+            <img src="./static/images/cam/painting.png" alt="teaser" width="39%">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline width="39%">
+              <source src="./static/videos/cam/painting-cam.mp4" type="video/mp4">
+            </video>
+            <figcaption>
+              <h5 style="font-family: Chalkduster" align="center">
+                <b>Prompt: "A oil painting."</b>
+              </h5>
+            </figcaption>
+          </figure>
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- Concurrent Work. -->
+    <div class="container is-max-desktop">
+      <div class="column is-full-width">
+        <h2 class="title is-4">Related Links</h2>
+        <p>
+          [1] <a href="https://arxiv.org/abs/2302.05543" name="ControlNet" id="ControlNet">Adding Conditional Control to
+            Text-to-Image Diffusion Models</a>
+        </p>
+        <p>
+          [2] <a href="https://arxiv.org/abs/2311.16933" name="SparsCtrl" id="SparsCtrl">SparseCtrl: Adding Sparse
+            Controls to Text-to-Video Diffusion Models</a>
+        </p>
+        <p>
+          [3] <a href="https://civitai.com/" name="CIVITAI" id="CIVITAI">
+            https://civitai.com/</a>
+        </p>
+        <p>
+          [4] <a href="https://arxiv.org/abs/2307.04725">AnimateDiff: Animate Your Personalized Text-to-Image Diffusion
+            Models without Specific Tuning </a>
+        </p>
+      </div>
+    </div>
+
+    </div>
+  </section>
+  <!-- Results -->
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is modified from the <a href="https://nerfies.github.io/">Nerfies</a>, which is licensed
+              under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              This means you are free to borrow the <a href="https://github.com/nerfies/nerfies.github.io">source
+                code</a> of this website,
+              we just ask that you link back to this page in the footer.
+              Please remember to remove the analytics code included in the header of the website which
+              you do not want on your website.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
